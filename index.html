@@ -250,6 +250,10 @@
     transition:background .15s;
   }
   .submit-btn:hover{background:#1b262c;}
+  .submit-btn:disabled{opacity:0.7; cursor:not-allowed;}
+  #form-response{margin-top:14px; font-size:13.5px; font-weight:600; display:none; padding:12px 14px; border-radius:9px;}
+  #form-response.success{display:block; background:#E7EEE7; color:var(--sage-dark);}
+  #form-response.error{display:block; background:#F5E3DB; color:var(--urgent);}
 
   /* ---------- Footer ---------- */
   footer{background:var(--deep); color:#DCE3E0; padding-top:0;}
@@ -475,123 +479,44 @@
       </div>
     </div>
 
-    <!-- Reemplaza tu bloque form-card por este estructurado con IDs -->
-<div class="form-card">
-  <form id="contact-form">
-    <div class="field">
-      <label for="nombre">Nombre completo</label>
-      <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
-    </div>
+    <div class="form-card">
+      <form id="contact-form">
+        <div class="field">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+        </div>
 
-    <div class="field">
-      <label for="telefono">Teléfono</label>
-      <input type="tel" id="telefono" name="telefono" required placeholder="+376 000 000">
-    </div>
+        <div class="field">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" required placeholder="+376 000 000">
+        </div>
 
-    <div class="field">
-      <label for="email">Correo electrónico</label>
-      <input type="email" id="email" name="email" required placeholder="correo@ejemplo.com">
-    </div>
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" required placeholder="correo@ejemplo.com">
+        </div>
 
-    <div class="field">
-      <label for="servicio">Servicio requerido</label>
-      <select id="servicio" name="servicio">
-        <option value="Reforma General">Reforma General</option>
-        <option value="Obra Civil / Construcción">Obra Civil / Construcción</option>
-        <option value="Mantenimiento / Multiservicio">Mantenimiento / Multiservicio</option>
-      </select>
-    </div>
+        <div class="field">
+          <label>Nivel de urgencia</label>
+          <div class="urgency-options">
+            <label class="urgency-opt active" data-level="urgente">
+              <input type="radio" name="urgencia" value="Urgente" checked> Urgente
+            </label>
+            <label class="urgency-opt" data-level="corto">
+              <input type="radio" name="urgencia" value="Corto plazo"> Corto plazo
+            </label>
+            <label class="urgency-opt" data-level="medio">
+              <input type="radio" name="urgencia" value="Medio plazo"> Medio plazo
+            </label>
+            <label class="urgency-opt" data-level="largo">
+              <input type="radio" name="urgencia" value="Largo plazo"> Largo plazo
+            </label>
+          </div>
+        </div>
 
-    <div class="field">
-      <label>Nivel de urgencia</label>
-      <div class="urgency-options">
-        <label class="urgency-opt active" data-level="normal">
-          <input type="radio" name="urgencia" value="Normal" checked> Normal
-        </label>
-        <label class="urgency-opt" data-level="media">
-          <input type="radio" name="urgencia" value="Media"> Media
-        </label>
-        <label class="urgency-opt" data-level="alta">
-          <input type="radio" name="urgencia" value="Alta"> Alta
-        </label>
-        <label class="urgency-opt" data-level="urgente">
-          <input type="radio" name="urgencia" value="Urgente"> Urgente
-        </label>
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="detalles">Detalles del proyecto</label>
-      <textarea id="detalles" name="detalles" placeholder="Describe brevemente lo que necesitas..."></textarea>
-    </div>
-
-    <button type="submit" id="submit-btn" class="submit-btn">Enviar solicitud</button>
-  </form>
-
-  <div id="form-response"></div>
-</div>
-
-<script>
-  // Pega aquí la URL que copiaste en el Paso 2
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzB8Q1XQFupYpaxjKJognJ0I07XCMe1dFEJQAcVMwD_a8OtgdRf9YcUu4L1Se2g5yCt/exec";
-
-  // Manejo visual de selección de urgencia
-  document.querySelectorAll('.urgency-opt').forEach(opt => {
-    opt.addEventListener('click', () => {
-      document.querySelectorAll('.urgency-opt').forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-      opt.querySelector('input').checked = true;
-    });
-  });
-
-  // Envío del formulario
-  document.getElementById('contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const submitBtn = document.getElementById('submit-btn');
-    const responseBox = document.getElementById('form-response');
-
-    submitBtn.disabled = true;
-    submitBtn.innerText = 'Enviando...';
-    responseBox.style.display = 'none';
-
-    const formData = {
-      nombre: document.getElementById('nombre').value,
-      telefono: document.getElementById('telefono').value,
-      email: document.getElementById('email').value,
-      servicio: document.getElementById('servicio').value,
-      urgencia: document.querySelector('input[name="urgencia"]:checked').value,
-      detalles: document.getElementById('detalles').value
-    };
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Evita bloqueos de CORS estándar con Apps Script
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(() => {
-      responseBox.className = 'success';
-      responseBox.innerText = '¡Solicitud enviada con éxito! Nos pondremos en contacto pronto.';
-      responseBox.style.display = 'block';
-      document.getElementById('contact-form').reset();
-      submitBtn.disabled = false;
-      submitBtn.innerText = 'Enviar solicitud';
-    })
-    .catch(error => {
-      responseBox.className = 'error';
-      responseBox.innerText = 'Ocurrió un error al enviar el formulario. Por favor inténtalo de nuevo.';
-      responseBox.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.innerText = 'Enviar solicitud';
-    });
-  });
-</script>
         <div class="field">
           <label for="mensaje">Describe brevemente el problema o proyecto</label>
-          <textarea id="mensaje" name="Mensaje" placeholder="Ej: fuga de agua bajo el fregadero de la cocina"></textarea>
+          <textarea id="mensaje" name="mensaje" placeholder="Ej: fuga de agua bajo el fregadero de la cocina"></textarea>
         </div>
 
         <div class="estimator">
@@ -603,8 +528,10 @@
           <p id="est-desc">Un técnico te contactará de forma prioritaria, incluso fuera de horario comercial.</p>
         </div>
 
-        <button type="submit" class="submit-btn">Enviar solicitud</button>
+        <button type="submit" id="submit-btn" class="submit-btn">Enviar solicitud</button>
       </form>
+
+      <div id="form-response"></div>
     </div>
   </div>
 </section>
@@ -643,6 +570,15 @@
 </a>
 
 <script>
+(function(){
+  // ============================================================
+  // ATENCIÓN: pega aquí la URL de tu Google Apps Script desplegado
+  // (ver instrucciones que te he dado en el chat para crearlo).
+  // Esta única URL se encarga de: guardar la fila en Google Sheets
+  // Y enviar el email a valenciaconstructora.and@gmail.com.
+  // ============================================================
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym6dgFW7zs9UdkC5hCiB7WV6vEDsqepcwqNADTx9sWHokDf_3AzODmOlMuMwya9oIh/exec";
+
   const options = document.querySelectorAll('.urgency-opt');
   const estTime = document.getElementById('est-time');
   const estDesc = document.getElementById('est-desc');
@@ -657,6 +593,7 @@
 
   function updateEstimator(level){
     const data = levels[level];
+    if(!data) return;
     estTime.textContent = data.time;
     estTime.style.color = data.color;
     gaugeFill.style.width = data.width;
@@ -668,56 +605,56 @@
     opt.addEventListener('click', () => {
       options.forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
+      opt.querySelector('input').checked = true;
       updateEstimator(opt.dataset.level);
     });
   });
 
-  document.getElementById('contact-form').addEventListener('submit', function(e){
-    // El envío real del formulario ahora lo gestiona FormSubmit (action del <form>).
-  });
-</script>
+  const form = document.getElementById('contact-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const responseBox = document.getElementById('form-response');
 
-<script>
-(function(){
-  var form = document.getElementById('contact-form');
-  if(!form) return;
   form.addEventListener('submit', async function(ev){
     ev.preventDefault();
+
+    const registro = {
+      nombre: document.getElementById('nombre').value,
+      telefono: document.getElementById('telefono').value,
+      email: document.getElementById('email').value,
+      urgencia: (form.querySelector('input[name="urgencia"]:checked') || {}).value || '',
+      mensaje: document.getElementById('mensaje').value,
+      fecha: new Date().toISOString()
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+    responseBox.className = '';
+    responseBox.style.display = 'none';
+
     try{
-      var nombreEl = document.getElementById('nombre');
-      var telefonoEl = document.getElementById('telefono');
-      var emailEl = document.getElementById('email');
-      var mensajeEl = document.getElementById('mensaje');
-      var urgenciaEl = form.querySelector('input[name="urgencia"]:checked');
+      // "no-cors" evita el bloqueo de CORS de Apps Script; no podemos leer
+      // la respuesta, pero si el fetch no lanza error asumimos éxito.
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(registro)
+      });
 
-      var registro = {
-        nombre: nombreEl ? nombreEl.value : '',
-        telefono: telefonoEl ? telefonoEl.value : '',
-        email: emailEl ? emailEl.value : '',
-        motivo_solicitud: mensajeEl ? mensajeEl.value : '',
-        urgencia: urgenciaEl ? urgenciaEl.value : '',
-        fecha: new Date().toISOString()
-      };
-
-      if(window.storage && window.storage.set){
-        var key = 'clientes:' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
-        await window.storage.set(key, JSON.stringify(registro), true);
-      }
-
-      try{
-        await fetch('https://script.google.com/macros/s/AKfycbzZmxM9Tn_cZw1UDUCnpdPih9rtZIe95AMpQqHpDoLYmmq1D3u5OeGd7l5bVt0UXWQrFw/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(registro)
-        });
-      }catch(sheetErr){
-        console.error('No se pudo guardar el registro en Google Sheets:', sheetErr);
-      }
+      responseBox.className = 'success';
+      responseBox.textContent = '¡Solicitud enviada con éxito! Nos pondremos en contacto pronto.';
+      form.reset();
+      options.forEach(o => o.classList.remove('active'));
+      document.querySelector('.urgency-opt[data-level="urgente"]').classList.add('active');
+      updateEstimator('urgente');
     }catch(err){
-      console.error('No se pudo guardar el registro en la base de datos interna:', err);
+      console.error('Error al enviar la solicitud:', err);
+      responseBox.className = 'error';
+      responseBox.textContent = 'Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo o escríbenos por WhatsApp.';
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar solicitud';
     }
-    ev.target.submit();
   });
 })();
 </script>
